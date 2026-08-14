@@ -1,4 +1,3 @@
-import { string } from "./../../../../node_modules/zod/src/v4/core/regexes";
 import bcrypt from "bcryptjs";
 import type { JwtPayload, SignOptions } from "jsonwebtoken";
 import {
@@ -335,10 +334,16 @@ const googleLogin = async (payload: IGoogleLoginPayload) => {
   };
 };
 
+const forgotPassword = (payload: any) => {};
+
+const resetPassword = (payload: any) => {};
+
 export const AuthService = {
   registerPatient,
   loginUser,
   getMe,
   refreshToken,
   googleLogin,
+  forgotPassword,
+  resetPassword,
 };
