@@ -385,7 +385,7 @@ const forgotPassword = async (payload: IForgotPasswordPayload) => {
 
   const tempatePath = path.join(
     process.cwd(),
-    "src/app/templates/forgot-password.ejs",
+    "src/app/module/templates/forgot-password.ejs",
   );
 
   const templateData = {
@@ -465,7 +465,7 @@ const resetPassword = async (payload: IResetPasswordPayload) => {
 
   const tempatePath = path.join(
     process.cwd(),
-    "src/app/templates/reset-password-success.ejs",
+    "src/app/module/templates/reset-password-success.ejs",
   );
 
   const templateData = {
