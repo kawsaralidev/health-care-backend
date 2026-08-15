@@ -21,6 +21,8 @@ import { googleClient } from "../../lib/googleAuth";
 import { redisClient } from "../../lib/redis";
 import crypto from "crypto";
 import { transporter } from "../../lib/nodemailer";
+import path from "path";
+import ejs from "ejs";
 
 const registerPatient = async (payload: IRegisterPatientPayload) => {
   const { name, password, patient: patientData } = payload;
@@ -381,23 +383,26 @@ const forgotPassword = async (payload: IForgotPasswordPayload) => {
     },
   });
 
-  // const tempatePath = path.join(process.cwd(), "src/app/templates/forgot-password.ejs")
+  const tempatePath = path.join(
+    process.cwd(),
+    "src/app/templates/forgot-password.ejs",
+  );
 
-  // const templateData = {
-  // 	name: isUserExist.name,
-  // 	otp,
-  // 	expirationMinutes: expirationSeconds / 60
+  const templateData = {
+    name: isUserExist.name,
+    otp,
+    expirationMinutes: expirationSeconds / 60,
+  };
 
-  // }
-
-  // const html = await ejs.renderFile(tempatePath, templateData)
+  const html = await ejs.renderFile(tempatePath, templateData);
 
   await transporter.sendMail({
     from: config.email_sender,
     to: isUserExist.email,
     subject: "Forgot Password",
-    text: `Your OTP is ${otp}`,
-    html: `<h1>Your OTP is ${otp}</h1>`,
+    // text: `Your OTP is ${otp}`,
+    // html: `<h1>Your OTP is ${otp}</h1>`,
+    html,
   });
 };
 
@@ -458,25 +463,25 @@ const resetPassword = async (payload: IResetPasswordPayload) => {
 
   await redisClient.del([key]);
 
-  // const tempatePath = path.join(
-  //   process.cwd(),
-  //   "src/app/templates/reset-password-success.ejs",
-  // );
+  const tempatePath = path.join(
+    process.cwd(),
+    "src/app/templates/reset-password-success.ejs",
+  );
 
-  // const templateData = {
-  //   name: isUserExist.name,
-  // };
+  const templateData = {
+    name: isUserExist.name,
+  };
 
-  // const html = await ejs.renderFile(tempatePath, templateData);
+  const html = await ejs.renderFile(tempatePath, templateData);
 
-  // await transporter.sendMail({
-  //   from: config.email_sender,
-  //   to: isUserExist.email,
-  //   subject: "Password Changed",
-  //   // text : `Your OTP is ${otp}`
-  //   // html: `<h1>Your Password Is Changed</h1>`
-  //   html,
-  // });
+  await transporter.sendMail({
+    from: config.email_sender,
+    to: isUserExist.email,
+    subject: "Password Changed",
+    // text : `Your OTP is ${otp}`
+    // html: `<h1>Your Password Is Changed</h1>`
+    html,
+  });
 };
 
 export const AuthService = {
