@@ -1,14 +1,14 @@
-// import { Router } from "express";
-// import { AppointmentController } from "./appointment.controller";
+import { Router } from "express";
+import { AppointmentController } from "./appointment.controller";
 
-// const router = Router();
+const router = Router();
 
-// router.post("/book-appointment", AppointmentController.bookAppointment);
+router.post("/book-appointment", AppointmentController.bookAppointment);
 
-// //book appointment callback url
-// router.get(
-//   "/book-appointment/payment/callback",
-//   AppointmentController.bookAppointmentCallback,
-// );
+//book appointment callback url
+router.get(
+  "/book-appointment/payment/callback",
+  AppointmentController.bookAppointmentCallback,
+);
 
-// export const AppointementRoutes = router;
+export const AppointementRoutes = router;
