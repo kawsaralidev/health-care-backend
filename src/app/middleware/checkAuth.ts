@@ -68,11 +68,12 @@ export const auth = (...requiredRoles: Role[]) => {
       throw new Error("Your account has been blocked. Please contact support.");
     }
 
+    // database user information
     req.user = {
-      email,
-      name,
-      userId,
-      role,
+      email: user.email,
+      name: user.name,
+      userId: user.id,
+      role: user.role,
     };
 
     next();
