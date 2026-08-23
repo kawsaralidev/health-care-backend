@@ -1,22 +1,22 @@
-// import { Router } from "express";
-// import { DoctorController } from "./doctor.controller";
-// import { upload } from "../../lib/multer";
+import { Router } from "express";
+import { DoctorController } from "./doctor.controller";
+import { upload } from "../../lib/multer";
 
-// const router = Router();
+const router = Router();
 
-// router.post(
-//   "/apply-as-doctor",
-//   upload.fields([
-//     {
-//       name: "resume",
-//       maxCount: 1,
-//     },
-//     {
-//       name: "additionalFiles",
-//       maxCount: 5,
-//     },
-//   ]),
-//   DoctorController.applyAsDoctor,
-// );
+router.post(
+  "/apply-as-doctor",
+  upload.fields([
+    {
+      name: "resume",
+      maxCount: 1,
+    },
+    {
+      name: "additionalFiles",
+      maxCount: 5,
+    },
+  ]),
+  DoctorController.applyAsDoctor,
+);
 
-// export const DoctorRoutes = router;
+export const DoctorRoutes = router;
