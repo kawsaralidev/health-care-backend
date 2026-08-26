@@ -23,10 +23,10 @@ router.post(
 
 router.post("/apply-as-doctor", DoctorController.verifyDoctorEmail);
 
-// router.post(
-//   "/approve-doctor",
-//   auth(Role.ADMIN, Role.SUPER_ADMIN),
-//   DoctorController.approveDoctor,
-// );
+router.post(
+  "/approve-doctor",
+  auth(Role.ADMIN, Role.SUPER_ADMIN),
+  DoctorController.approveDoctor,
+);
 
 export const DoctorRoutes = router;
