@@ -14,6 +14,7 @@ import {
   IBookAppointmentPayload,
   ICancelAppointmentPayload,
   IPayAppointmentPayload,
+  IUpdateAppointmentStatusPayload,
 } from "./appointment.interface";
 import { transporter } from "../../lib/nodemailer";
 import PDFDocument from "pdfkit";
@@ -629,6 +630,93 @@ const cancelAppointment = async (
   });
 
   return transactionResult;
+};
+
+// DOCTOR ONLY CONFIRMED => ONGOING => COMPLETED
+const updateAppointmentStatus = async (
+  appointmentId: string,
+  payload: IUpdateAppointmentStatusPayload,
+  user: RequestUser,
+) => {
+  const doctor = await prisma.doctor.findUnique({
+    where: { userId: user.userId },
+  });
+
+  if (!doctor) {
+    throw new AppError(httpStatus.NOT_FOUND, "Doctor Profile Not Found");
+  }
+
+  const appointment = await prisma.apppointment.findUnique({
+    where: { id: appointmentId, doctorId: doctor.id },
+  });
+
+  if (!appointment) {
+    throw new AppError(httpStatus.NOT_FOUND, "Appointment Not Found");
+  }
+
+  if (appointment.status === AppointmentStatus.COMPLETE) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "Appointment is already completed",
+    );
+  }
+
+  if (appointment.status === AppointmentStatus.CANCELED) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "Appointment is already cancelled",
+    );
+  }
+  if (appointment.status === AppointmentStatus.PENDING) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "Appointment is Pending. You can change the status after appointment is confirmed",
+    );
+  }
+
+  if (appointment.status === AppointmentStatus.CONFIRMED) {
+    if (payload.status !== "ONGOING") {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        "Confirmed Appointment Must Be Ongoing At First",
+      );
+    }
+
+    await prisma.apppointment.update({
+      where: {
+        id: appointment.id,
+      },
+      data: {
+        status: AppointmentStatus.ONGOING,
+      },
+    });
+  }
+
+  if (appointment.status === AppointmentStatus.ONGOING) {
+    if (payload.status !== "COMPLETED") {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        "Ongoinf Appointment Must Be Complted.",
+      );
+    }
+
+    await prisma.apppointment.update({
+      where: {
+        id: appointment.id,
+      },
+      data: {
+        status: AppointmentStatus.COMPLETE,
+      },
+    });
+  }
+
+  const updatedAppointment = await prisma.apppointment.findUnique({
+    where: {
+      id: appointment.id,
+    },
+  });
+
+  return updatedAppointment;
 };
 
 export const AppointmentServices = {
