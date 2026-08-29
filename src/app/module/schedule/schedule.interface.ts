@@ -3,3 +3,9 @@ export interface ICreateSchedulePayload {
   endDateTime: Date;
   meetingLink: String;
 }
+
+export interface IUpdateSchedulePayload {
+  startDateTime?: Date;
+  endDateTime?: Date;
+  meetingLink?: string;
+}
