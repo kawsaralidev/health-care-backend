@@ -160,6 +160,7 @@ const applyAsDoctor = async (
     subject: "Doctor Application - Email Verification",
     html,
   });
+  console.log("Doctor application email sent successfully");
 
   return doctorApplication;
 };
@@ -270,7 +271,7 @@ const approveDoctor = async (
 
   const tempatePath = path.join(
     process.cwd(),
-    `src/app/templates/${
+    `src/app/module/templates/${
       isApproved
         ? "doctor-application-approved.ejs"
         : "doctor-application-rejected.ejs"

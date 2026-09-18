@@ -11,19 +11,13 @@ const router = Router();
 router.post(
   "/apply-as-doctor",
   upload.fields([
-    {
-      name: "resume",
-      maxCount: 1,
-    },
-    {
-      name: "additionalFiles",
-      maxCount: 5,
-    },
+    { name: "resume", maxCount: 1 },
+    { name: "additionalFiles", maxCount: 5 },
   ]),
   DoctorController.applyAsDoctor,
 );
 
-router.post("/apply-as-doctor", DoctorController.verifyDoctorEmail);
+router.post("/verify-email", DoctorController.verifyDoctorEmail);
 
 router.post(
   "/approve-doctor",

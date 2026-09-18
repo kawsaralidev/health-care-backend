@@ -26,6 +26,8 @@ const applyAsDoctor = catchAsync(async (req: Request, res: Response) => {
     resume,
     additionalFiles,
   );
+  console.log("Doctor application service completed");
+  console.log("Sending doctor application response");
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
