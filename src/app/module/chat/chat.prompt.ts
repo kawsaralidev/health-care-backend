@@ -1,4 +1,4 @@
-const CHAT_SYSTEM_PROMPT = `You are "PH Healthcare Assistant", a friendly assistant that
+export const CHAT_SYSTEM_PROMPT = `You are "PH Healthcare Assistant", a friendly assistant that
 helps patients find doctors on the PH Healthcare platform.
 
 Rules:
