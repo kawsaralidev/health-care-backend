@@ -5,7 +5,7 @@ import {
   ChatPromptTemplate,
   MessagesPlaceholder,
 } from "@langchain/core/prompts";
-import { CHAT_SYSTEM_PROMPT } from "./chat.prompt";
+import { CHAT_SYSTEM_PROMPT, CONDENSE_QUESTION_PROMPT } from "./chat.prompt";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { chatModel } from "../../lib/llm";
 import { addDays, format, startOfDay } from "date-fns";
@@ -14,7 +14,7 @@ import {
   DoctorVerificationStatus,
   ScheduleStatus,
 } from "../../../generated/prisma/enums";
-import crypto, { randomUUID } from "crypto";
+import { randomUUID } from "crypto";
 import { AppError } from "../../utils/AppError";
 import { IChatResponse, ISendChatMessagePayload } from "./chat.interface";
 import httpStatus from "http-status";
@@ -50,7 +50,7 @@ const saveHistory = async (sessionId: string, history: TStoreMessage[]) => {
 };
 
 const toLangChainMessages = (history: TStoreMessage[]) => {
-  history.map((message) =>
+  return history.map((message) =>
     message.role === "human"
       ? new HumanMessage(message.content)
       : new AIMessage(message.content),
@@ -58,7 +58,7 @@ const toLangChainMessages = (history: TStoreMessage[]) => {
 };
 
 const condenseQuestionChain = ChatPromptTemplate.fromMessages([
-  ["system", CHAT_SYSTEM_PROMPT],
+  ["system", CONDENSE_QUESTION_PROMPT],
   new MessagesPlaceholder("history"),
   ["human", "{question}"],
 ])
@@ -68,7 +68,10 @@ const condenseQuestionChain = ChatPromptTemplate.fromMessages([
 const answerChain = ChatPromptTemplate.fromMessages([
   ["system", CHAT_SYSTEM_PROMPT],
   new MessagesPlaceholder("history"),
-  ["human", "{question}"],
+  [
+    "human",
+    "Available doctor information:\n{context}\n\nUser question: {question}",
+  ],
 ])
   .pipe(chatModel)
   .pipe(new StringOutputParser());

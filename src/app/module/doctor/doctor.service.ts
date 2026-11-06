@@ -25,6 +25,7 @@ import { DoctorWhereInput } from "../../../generated/prisma/models";
 import { IQuery } from "../../interfaces";
 import { AppError } from "../../utils/AppError";
 import { addDays, startOfDay } from "date-fns";
+import { upsertDoctorEmbedding } from "../chat/chat.indexer";
 
 const applyAsDoctor = async (
   payload: IApplyAsDoctorPayload,
@@ -267,6 +268,8 @@ const approveDoctor = async (
     },
   });
 
+  syncDoctorEmbedding(updatedDoctor.id);
+
   const isApproved = verificationStatus === DoctorVerificationStatus.APPROVED;
 
   const tempatePath = path.join(
@@ -414,6 +417,8 @@ const updateDoctorProfile = async (
     where: { id: existingDoctor.id },
     data: payload,
   });
+
+  syncDoctorEmbedding(updatedDoctor.id);
 
   return updatedDoctor;
 };
@@ -623,6 +628,12 @@ const getSingleDoctorPublicProfile = async (doctorId: string) => {
   }
 
   return doctor;
+};
+
+const syncDoctorEmbedding = (doctorId: string) => {
+  upsertDoctorEmbedding(doctorId).catch((error) =>
+    console.error("chat: failed to index doctor", error),
+  );
 };
 
 export const DoctorServices = {
